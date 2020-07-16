@@ -1,6 +1,5 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var table = require("console.table");
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -157,7 +156,7 @@ function read() {
 
 function readEmployees() {
   console.log("Viewing all employees.")
-  var query = "SELECT * FROM employees;"
+  var query = "SELECT * FROM employee;"
   connection.query(query, function (err, res) {
       if (err) throw err;
       console.table(res);
@@ -166,8 +165,8 @@ function readEmployees() {
 }
 
 function readRoles() {
-  console.log("Viewing all employee roles.")
-  var query = "SELECT * FROM roles;"
+  console.log("Viewing all employees roles.")
+  var query = "SELECT * FROM role;"
   connection.query(query, function (err, res) {
       if (err) throw err;
       console.table(res);
@@ -177,7 +176,7 @@ function readRoles() {
 
 function readDepartments() {
   console.log("Viewing all departments.")
-  var query = "SELECT * FROM departments;"
+  var query = "SELECT * FROM department;"
   connection.query(query, function (err, res) {
       if (err) throw err;
       console.table(res);
