@@ -40,16 +40,8 @@ connection.connect(function(err) {
         case "Update employee roles":
           update();
           break;
-  
-        /*case "Update employee roles":
-          delete();
-          break;
-  
-        case "Find artists with a top song and top album in the same year":
-          songAndAlbumSearch();
-          break;*/
 
-        case "exit":
+          case "exit":
           connection.end();
           break;
       };
@@ -73,7 +65,7 @@ connection.connect(function(err) {
         break;
 
       case "Employee":
-        createEmploee();
+        createEmployee();
         break;
     }
   });
@@ -85,7 +77,110 @@ function createDepartment() {
     message: "Name of new Department?",
   })
   .then(function(answer) {
+    "INSERT INTO department (name) VALUES (answer.dprtmnt)";
+    start()
+  })
+}
+function createRole() {
+  
+  inquirer.prompt({
+    type: "input",
+    name: "title",
+    message: "Name of new Role?",
+  }),
+  inquirer.prompt({
+    type: "number",
+    name: "salary",
+    message: "What is the positions salary?"
+  }),
+  inquirer.prompt({
+    type: "list",
+    name: "department",
+    message: "What department does this role belong to?"
+  })
+  .then(function(answer) {
+    console.log(answers);
+    // when finished prompting, insert a new item into the db with that info
+    connection.query(
+      "INSERT INTO role SET ?",
+      {
+          title: answers.title,
+          salary: answers.salary,
+          department_id: answers.department
+      },
+      (err) => {
+          if (err) throw err;
+          console.log("The role of " + answers.new_role + " has been added.");
+      }
+  );
+  start();
+})
+}
+
+//*******finish this function
+function createEmployee() {
+  inquirer.prompt({
+    type: "input",
+    name: "dprtmnt",
+    message: "Name of new Department?"
+  })
+  .then(function(answer) {
     //var query = connection.query(
     "INSERT INTO department (name) VALUES (answer.dprtmnt)";
+  })
+  start();
+}
+
+function read() {
+  inquirer.prompt({
+    type: "list",
+    name: "read",
+    message: "What would you like to view?",
+    choices: ["Department", "Role", "Employee"]
+  })
+  .then(function(answer) {
+    switch (answer.read) {
+    case "Department":
+      readDepartments();
+      break;
+
+    case "Role":
+      readRoles();
+      break;
+
+    case "Employee":
+      readEmployees();
+      break;
+  }
+});
+};
+
+function readEmployees() {
+  console.log("Viewing all employees.")
+  var query = "SELECT * FROM employees;"
+  connection.query(query, function (err, res) {
+      if (err) throw err;
+      console.table(res);
+      start();
+  })
+}
+
+function readRoles() {
+  console.log("Viewing all employee roles.")
+  var query = "SELECT * FROM roles;"
+  connection.query(query, function (err, res) {
+      if (err) throw err;
+      console.table(res);
+      start();
+  })
+}
+
+function readDepartments() {
+  console.log("Viewing all departments.")
+  var query = "SELECT * FROM departments;"
+  connection.query(query, function (err, res) {
+      if (err) throw err;
+      console.table(res);
+      start();
   })
 }
