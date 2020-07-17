@@ -111,13 +111,12 @@ function createRole() {
         type: "list",
         name: "department",
         message: "What department does this role belong to?",
-        choices: deptid
-        //value:deptid
+        choices: deptname
       }
       ])
       .then(function (answers) {
         console.log(answers);
-        // when finished prompting, insert a new item into the db with that info
+        answers.department = deptid[deptname.indexOf(answers.department)];
         connection.query(
           "INSERT INTO role (title,salary,department_id) VALUES (?, ?, ?)",
           [answers.title, answers.salary, answers.department],
@@ -131,8 +130,6 @@ function createRole() {
       })
   })
 }
-
-//*******finish this function
 function createEmployee() {
   var query = "SELECT id FROM role;"
   connection.query(query, function (err, res) {
@@ -177,58 +174,138 @@ function createEmployee() {
           })
       })
   })
-  }
+}
 
 function read() {
-      inquirer.prompt({
-        type: "list",
-        name: "read",
-        message: "What would you like to view?",
-        choices: ["Department", "Role", "Employee"]
-      })
-        .then(function (answer) {
-          switch (answer.read) {
-            case "Department":
-              readDepartments();
-              break;
+  inquirer.prompt({
+    type: "list",
+    name: "read",
+    message: "What would you like to view?",
+    choices: ["Department", "Role", "Employee"]
+  })
+    .then(function (answer) {
+      switch (answer.read) {
+        case "Department":
+          readDepartments();
+          break;
 
-            case "Role":
-              readRoles();
-              break;
+        case "Role":
+          readRoles();
+          break;
 
-            case "Employee":
-              readEmployees();
-              break;
+        case "Employee":
+          readEmployees();
+          break;
+      }
+    });
+};
+
+function readEmployees() {
+  console.log("Viewing all employees.")
+  var query = "SELECT * FROM employee;"
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    start();
+  })
+}
+
+function readRoles() {
+  console.log("Viewing all employees roles.")
+  var query = "SELECT * FROM role;"
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    start();
+  })
+}
+
+function readDepartments() {
+  console.log("Viewing all departments.")
+  var query = "SELECT * FROM department;"
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    start();
+  })
+}
+
+function update() {
+  inquirer.prompt({
+    type: "list",
+    name: "update",
+    message: "What would you like to update?",
+    choices: ["Employee role", "Manager"]
+  })
+    .then(function (answer) {
+      switch (answer.update) {
+        case "Employee role":
+          updateEmployee();
+          break;
+
+        case "Manager":
+          updateManager();
+          break;
+      }
+    });
+};
+function updateEmployee() {
+  var query = "SELECT * FROM employee"
+  connection.query(query, function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    var id = []
+    var empName = []
+    for (var i = 0; i < res.length; i++) {
+      id.push(res[i].id)
+      empName.push(res[i].first_name + " " + res[i].last_name)
+    }
+    // query database for list of current roles
+    query = "SELECT * FROM role"
+    connection.query(query, function (err, roleRes) {
+      if (err) throw err;
+      var roleid = []
+      var titles = []
+      for (var i = 0; i < roleRes.length; i++) {
+        roleid.push(roleRes[i].id)
+        titles.push(roleRes[i].title)
+      }
+      // prompt with - which employee, and role?
+      inquirer.prompt([
+        {
+          type: "list",
+          name: "employee",
+          message: "Who would you like to update?",
+          choices: empName
+        },
+        {
+          type: "list",
+          name: "newRole",
+          message: "What role would you like to assign the employee?",
+          choices: titles
+        }
+      ]).then(function (answers) {
+        console.log(answers);
+        answers.newRole = roleid[titles.indexOf(answers.newRole)];
+        answers.employee = id[empName.indexOf(answers.employee)];
+
+        connection.query(
+          "UPDATE employee SET ? WHERE ?",
+          [
+            {
+              role_id: answers.newRole
+            },
+            {
+              id: answers.employee
+            }
+          ],
+          function (err) {
+            if (err) throw err;
+            console.log("The employee's role has been updated.");
+            start();
           }
-        });
-    };
-
-  function readEmployees() {
-    console.log("Viewing all employees.")
-    var query = "SELECT * FROM employee;"
-    connection.query(query, function (err, res) {
-      if (err) throw err;
-      console.table(res);
-      start();
+        )
+      })
     })
-  }
-
-  function readRoles() {
-    console.log("Viewing all employees roles.")
-    var query = "SELECT * FROM role;"
-    connection.query(query, function (err, res) {
-      if (err) throw err;
-      console.table(res);
-      start();
-    })
-  }
-
-  function readDepartments() {
-    console.log("Viewing all departments.")
-    var query = "SELECT * FROM department;"
-    connection.query(query, function (err, res) {
-      if (err) throw err;
-      console.table(res);
-      start();
-    })
-  }
+  })
+}
