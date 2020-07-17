@@ -7,7 +7,7 @@ VALUES ("Sales Lead",100000,1),("Sales Person",65000,1),("Lead Engineer",150000,
 
 INSERT INTO employee (first_name,last_name,role_id,manager_id)
 VALUES ("John","Cohsman",3,NULL),("Evin","Pach",7,NULL),("Joe","Denice",8,null),
-("Zach","Swan",6,NULL),("Richard","Gonzales",1,NULL);
+("Zach","Swan",6,NULL),("Richard","Gonzales",1,NULL),("Rich","Gonzo",5,NULL) ;
 
 SELECT role.id, role.id, role.department_id, department.id
 FROM role
