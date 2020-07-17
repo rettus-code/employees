@@ -244,7 +244,9 @@ function update() {
           break;
 
         case "Manager":
-          updateManager();
+          console.log("This feature under construction");
+          start();
+          //updateManager();
           break;
       }
     });
