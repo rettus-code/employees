@@ -76,43 +76,56 @@ function createDepartment() {
     message: "Name of new Department?",
   })
   .then(function(answer) {
-    "INSERT INTO department (name) VALUES (answer.dprtmnt)";
-    start()
+    connection.query(
+    "INSERT INTO department (name) VALUES (?);", answer.dprtmnt, function(err, result){
+      if (err) throw err;
+      //console.log(result);
+      start()
+    })
   })
 }
 function createRole() {
-  
-  inquirer.prompt({
+  var query = "SELECT id FROM department;"
+  connection.query(query, function (err, res) {
+      if (err) throw err;
+      
+   var deptid = []  
+      for (var i=0; i< res.length; i++){
+        deptid.push(res[i].id)
+      }
+  console.log(deptid);
+  inquirer.prompt(
+    [{
     type: "input",
     name: "title",
     message: "Name of new Role?",
-  }),
-  inquirer.prompt({
+  },
+  {
     type: "number",
     name: "salary",
     message: "What is the positions salary?"
-  }),
-  inquirer.prompt({
+  },
+  {
     type: "list",
     name: "department",
-    message: "What department does this role belong to?"
-  })
-  .then(function(answer) {
+    message: "What department does this role belong to?",
+    choices: deptid
+  }
+])
+  .then(function(answers) {
     console.log(answers);
     // when finished prompting, insert a new item into the db with that info
     connection.query(
-      "INSERT INTO role SET ?",
-      {
-          title: answers.title,
-          salary: answers.salary,
-          department_id: answers.department
-      },
-      (err) => {
+      "INSERT INTO role (title,salary,department_id) VALUES (?, ?, ?)",
+      [answers.title, answers.salary, answers.department],
+      (err, result) => {
           if (err) throw err;
           console.log("The role of " + answers.new_role + " has been added.");
+          start();
       }
   );
-  start();
+  
+})
 })
 }
 
@@ -125,6 +138,7 @@ function createEmployee() {
   })
   .then(function(answer) {
     //var query = connection.query(
+
     "INSERT INTO department (name) VALUES (answer.dprtmnt)";
   })
   start();
