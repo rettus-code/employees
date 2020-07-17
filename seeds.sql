@@ -2,11 +2,11 @@ INSERT INTO department (name)
 VALUES ("Sales"),("Engineering"),("Finance"),("Legal");
 
 INSERT INTO role (title,salary,department_id)
-VALUES ("Sales Lead",100000,1),("Sales Person",65000,1),("Lead Engineer",150000,2),("Software Engineer",120000,2),
-("Account Manager",90000,3),("Accountant",90000,3),("Legal Team Lead",130000,4),("Lawyer",85000,4),("Junior Engineer",70000,2);
+VALUES ("Sales Manager",100000,1),("Sales Person",65000,1),("Lead Engineer",150000,2),("Software Engineer",120000,2),
+("Account Manager",90000,3),("Accountant",90000,3),("Senior Legal Officer",130000,4),("Lawyer",85000,4),("Junior Engineer",70000,2);
 
 INSERT INTO employee (first_name,last_name,role_id,manager_id)
-VALUES ("John","Cohsman",3,NULL),("Evin","Pach",7,NULL),("Joe","Denice",8,null),
+VALUES ("John","Cohsman",3,NULL),("Evin","Pach",7,NULL),("Joe","Denice",8, 2),
 ("Zach","Swan",6,NULL),("Richard","Gonzales",1,NULL),("Rich","Gonzo",5,NULL) ;
 
 SELECT role.id, role.id, role.department_id, department.id

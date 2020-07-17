@@ -163,7 +163,7 @@ function createEmployee() {
         type: "list",
         name: "manager",
         message: "Who is the employees manager",
-        choices: [6]
+        choices: [2, 6]
       }
       ])
       .then(function (answers) {
